@@ -12,3 +12,6 @@ Page Down, Tab, Volume Increment and Volume Decrement. There are usually other v
 of devices have little implementation documentation, so it's necessary to play with them a little to see the output.
 
 
+## Releases
+### November 2024
+* Initial Release
