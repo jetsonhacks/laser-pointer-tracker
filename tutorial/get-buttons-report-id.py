@@ -2,6 +2,7 @@ import usb.core
 import usb.util
 
 # Find the USB device using Vendor ID and Product ID
+# Replace the idVendor and idProduct with your device
 dev = usb.core.find(idVendor=0x0e8f, idProduct=0x2517)
 
 if dev is None:
@@ -20,6 +21,7 @@ try:
     # Set the active configuration
     dev.set_configuration()
 
+    # This device has two interfaces - Your device may have more or less
     # Read data from both interfaces
     interfaces = [0, 1]
     while True:
@@ -58,16 +60,6 @@ try:
                         if report_id == 1:  # Assuming Report ID 1 for volume controls
                             consumer_code = data[1] | (data[2] << 8)
                             print("Data read:", data)
-                            ''' 
-                            if consumer_code == 0xE9:
-                                print("Volume Up pressed")
-                            elif consumer_code == 0xEA:
-                                print("Volume Down pressed")
-                            elif consumer_code == 0xE2:
-                                print("Mute pressed")
-                            else:
-                                print(f"Unknown consumer control code: {hex(consumer_code)}")
-                            '''
             except usb.core.USBError as e:
                 # Handle timeout errors by ignoring and continuing the loop
                 if e.errno == 110:  # errno 110 corresponds to a timeout
