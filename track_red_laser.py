@@ -32,15 +32,10 @@ def track_laser(frame, threshold_value, max_value, background_subtractor):
 
     return frame, red_channel, mask
 
-# Function to create the Settings window and trackbars
-
-
 def create_settings_window(threshold_value, max_value):
     cv2.namedWindow("Settings", flags=cv2.WINDOW_GUI_NORMAL)
     cv2.createTrackbar("Threshold", "Settings", threshold_value, 255, nothing)
     cv2.createTrackbar("Max Value", "Settings", max_value, 255, nothing)
-
-# Main function to run webcam and track the laser pointer
 
 def main():
     config = configparser.ConfigParser()
@@ -94,16 +89,8 @@ def main():
             frame, threshold_value, max_value, background_subtractor)
         if not tracking_enabled:
             processed_frame = unprocessed_frame  
-
-
+            
         cv2.imshow("Laser Tracker", processed_frame)
- 
-
-        processed_frame, red_channel, mask = track_laser(
-                frame, threshold_value, max_value, background_subtractor)
-
-        if not tracking_enabled:
-            processed_frame = unprocessed_frame
 
         if show_red_channels:
             cv2.imshow("Red Channel", red_channel)
