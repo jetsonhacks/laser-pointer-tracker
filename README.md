@@ -21,7 +21,13 @@ For the video tutorial, we use the pyusb module. The evdev module interface read
 
 
 ## Permissions
-There is a udev rule for the demo device in 99-laser-usb.rules. Copy it over to /etc/udev/rules.d and enable it.
+Typically you will add yourself (the user) to the 'input' group to be able to access the device.
+```
+sudo usermod -aG input $USER
+```
+You will need to log out/in or restart for the changes to take effect.
+
+There is an example udev rule for the demo device in 99-laser-usb.rules. You may not need it (this device does not). If you do, modify the file appropriately and copy it over to /etc/udev/rules.d and enable it.
 
 ```
 sudo cp 99-laser-usb.rules /etc/udev/rules.d
@@ -29,10 +35,9 @@ sudo udevadm control --reload-rules
 sudo udevadm trigger
 ```
 
-### Note
-The device is part of the 'input' group. You could add yourself to the input group instead of adding the udev rule. However, this is usually thought of as a security creep. Instead of adding just one device, there is potential for adding many using this approach and the advice is to be as specific as possible.
-
-
 ## Releases
+### December 2024
+* Added tutorial section
+  
 ### November 2024
 * Initial Release
