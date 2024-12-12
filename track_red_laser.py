@@ -42,7 +42,6 @@ def create_settings_window(threshold_value, max_value):
 
 # Main function to run webcam and track the laser pointer
 
-
 def main():
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -70,6 +69,7 @@ def main():
 
     show_settings = True
     show_red_channels = False
+    tracking_enabled = True
 
     # Create the initial "Settings" window
     create_settings_window(threshold_value, max_value)
@@ -88,9 +88,22 @@ def main():
                 # If the window is destroyed for some reason, recreate it
                 create_settings_window(threshold_value, max_value)
 
+        if not tracking_enabled:
+            unprocessed_frame = frame.copy() 
         processed_frame, red_channel, mask = track_laser(
             frame, threshold_value, max_value, background_subtractor)
+        if not tracking_enabled:
+            processed_frame = unprocessed_frame  
+
+
         cv2.imshow("Laser Tracker", processed_frame)
+ 
+
+        processed_frame, red_channel, mask = track_laser(
+                frame, threshold_value, max_value, background_subtractor)
+
+        if not tracking_enabled:
+            processed_frame = unprocessed_frame
 
         if show_red_channels:
             cv2.imshow("Red Channel", red_channel)
@@ -114,6 +127,8 @@ def main():
                 create_settings_window(threshold_value, max_value)
         elif key == ord('d'):
             show_red_channels = not show_red_channels
+        elif key == ord('t'):
+            tracking_enabled = not tracking_enabled  # Toggle tracking on/off
 
     cap.release()
     cv2.destroyAllWindows()
