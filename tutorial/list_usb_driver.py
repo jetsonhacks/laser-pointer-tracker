@@ -64,8 +64,8 @@ def list_drivers(device_path):
 
 def main():
     if len(sys.argv) != 2:
-        print("Usage: python script.py <usb_id>")
-        print("Example: python script.py 0e8f:2517")
+        print("Usage: python list_usb_driver.py <usb_id>")
+        print("Example: python list_usb_driver.py 0e8f:2517")
         sys.exit(1)
 
     usb_id = sys.argv[1]
