@@ -35,6 +35,19 @@ try:
         print("No devices found to monitor.")
         exit(1)
 
+    # Map of key code to modifier name
+    modifier_keys = {
+        evdev.ecodes.KEY_LEFTCTRL: "Ctrl",
+        evdev.ecodes.KEY_RIGHTCTRL: "Ctrl",
+        evdev.ecodes.KEY_LEFTSHIFT: "Shift",
+        evdev.ecodes.KEY_RIGHTSHIFT: "Shift",
+        evdev.ecodes.KEY_LEFTALT: "Alt",
+        evdev.ecodes.KEY_RIGHTALT: "Alt",
+    }
+
+    # Track the state of pressed modifiers
+    active_modifiers = set()
+
     # Monitor events from the devices
     print("Listening to events. Press Ctrl+C to exit.")
     while True:
@@ -44,13 +57,29 @@ try:
             for event in dev.read():
                 if event.type == evdev.ecodes.EV_KEY:  # Key press/release events
                     key_event = evdev.categorize(event)
-                    print(f"Key event intercepted on {dev.path}: {key_event}")
-                elif event.type == evdev.ecodes.EV_REL:  # Relative movement events
-                    rel_event = evdev.categorize(event)
-                    print(f"Relative event intercepted on {dev.path}: {rel_event}")
-                elif event.type == evdev.ecodes.EV_ABS:  # Absolute axis events
-                    abs_event = evdev.categorize(event)
-                    print(f"Absolute event intercepted on {dev.path}: {abs_event}")
+                    key_code = key_event.scancode
+                    key_state = key_event.keystate
+
+                    # Handle modifier keys
+                    if key_code in modifier_keys:
+                        if key_state == evdev.KeyEvent.key_down:
+                            active_modifiers.add(modifier_keys[key_code])
+                        elif key_state == evdev.KeyEvent.key_up:
+                            active_modifiers.discard(modifier_keys[key_code])
+
+                    # Format the output with active modifiers
+                    # You can check to see the keystate evdev.KeyEvent.keystate attribute
+                    # This is retrieved in the key_state variable above
+                    # 1. key_down (value 1) - button was pressed
+                    # 2. key_up (value 0) - button release
+                    # 3. key_hold (value 2) - indicates button is being held down
+                    # Typically you would parse the keystroke and act on the down button action
+                    modifiers = "+".join(sorted(active_modifiers))
+                    if modifiers:
+                        green_modifiers = f"\033[92m[{modifiers}]\033[0m"  # Wrap in green color
+                        print(f"{green_modifiers} {dev.path}: {key_event}")
+                    else:
+                        print(f"{dev.path}: {key_event}")
 
 except KeyboardInterrupt:
     print("Exiting...")
@@ -59,3 +88,4 @@ finally:
     for device in devices:
         device.ungrab()
         device.close()
+
